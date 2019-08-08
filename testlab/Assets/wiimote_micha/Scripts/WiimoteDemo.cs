@@ -4,6 +4,7 @@ using System.Collections;
 using System.Text;
 using System;
 using WiimoteApi;
+using WiimoteApi.Util;
 
 public class WiimoteDemo : MonoBehaviour {
 
@@ -32,20 +33,37 @@ public class WiimoteDemo : MonoBehaviour {
         do
         {
             ret = wiimote.ReadWiimoteData();
+            //Debug.Log("Ret " +wiimote);
 
             if (ret > 0 && wiimote.current_ext == ExtensionController.MOTIONPLUS) {
+                //Debug.Log("Pitch " +wiimote.MotionPlus.PitchSpeed);
+                float timer = 0.0f;
+                timer +=Time.deltaTime;
+                //Debug.Log(timer);
+                //Debug.Log("Yaw " +wiimote.MotionPlus.YawSlow);
+                //Debug.Log("Roll " +wiimote.MotionPlus.RollSlow);
+                
                 Vector3 offset = new Vector3(  -wiimote.MotionPlus.PitchSpeed,
                                                 wiimote.MotionPlus.YawSpeed,
                                                 wiimote.MotionPlus.RollSpeed) / 95f; // Divide by 95Hz (average updates per second from wiimote)
                 wmpOffset += offset;
+                //Debug.Log(-wiimote.MotionPlus.PitchSpeed /95f);
 
                 model.rot.Rotate(offset, Space.Self);
             }
         } while (ret > 0);
 
+        //float[] acc = wiimote.Accel.GetCalibratedAccelData();
+        //Debug.Log("Accel: "+acc[0] + " - " +acc[1]+" - "+ acc[2]);
+        ReadOnlyArray<int> rawAccs = wiimote.Accel.accel;
+        Debug.Log("Raw Accel" +rawAccs[0] + " - "+ rawAccs[1] + " - "+ rawAccs[2]);
+       
+        
+        
         model.a.enabled = wiimote.Button.a;
         // Micha
-        if (model.a.enabled) {
+        if (model.a.enabled)
+        {
             Debug.Log("A pressed");
             ZeroOut();
             ResetOffset();
@@ -94,6 +112,7 @@ public class WiimoteDemo : MonoBehaviour {
         float[] pointer = wiimote.Ir.GetPointingPosition();
         ir_pointer.anchorMin = new Vector2(pointer[0], pointer[1]);
         ir_pointer.anchorMax = new Vector2(pointer[0], pointer[1]);
+        Debug.Log("Accel: "+wiimote.Accel.GetCalibratedAccelData());
 	}
 
     void OnGUI()
