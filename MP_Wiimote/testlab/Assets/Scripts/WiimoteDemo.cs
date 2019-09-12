@@ -27,26 +27,70 @@ public class WiimoteDemo : MonoBehaviour
     private Vector3 wmpOffset = Vector3.zero;
 
     float timer = 0.0f;
+
+    public bool inertialActivated = true;
+
+    public float v;
+    public float v0 = 0;
+    public float a;
+    public float t;
+    public float s;
+    public float s0;
+
+    public float testAccelerationValue = 0;
     
-    private void Test()
+    private float InertialTest(float acceleration, float velocity0, float time, float distance0)
     {
-        Debug.Log("Test");
+        if (!inertialActivated) return 0f;
+     
+        Debug.Log("InertialTest running...");
+
+        a = acceleration;
+        v0 = velocity0;
+        t = time;
+        s0 = distance0;
+        
+      
+        
+        // 1. Ableitung
+        v = a * t + v0;
+        // 2. Ableitung
+        s = (a / 2f) * Mathf.Pow(t, 2f) + v0 * t + s0;
+        
+        // new v0
+        v0 = 1;
+        
+        // new s0
+        s0 = s;
+        
+        Debug.Log(s);
+        return 1;
+
     }
     
     void Start() {
         inertial=new InertialNavigation();
-        InvokeRepeating("Test",1.0f, 1.0f);
+        //InvokeRepeating("InertialTestTest",1.0f, 1.0f);
         initial_rotation = model.rot.localRotation;
+        
+        // set s0 to the original position
+        s0 = dummyCube.transform.position.x;
     }
 
 	void Update () {
-        //inertial.TestFunction();
-        
-        //timer +=Time.deltaTime;
-        //Debug.Log(timer);
 
-        dummyCube.transform.Translate(Vector3.right*0.1f*Time.deltaTime);
+
+        timer +=Time.deltaTime;
+        
+        InertialTest(testAccelerationValue, v0, timer, s0);
+        
+        testAccelerationValue = testAccelerationValue + 0.1f;
+        dummyCube.transform.position += new Vector3(s,0,0);
+        
+        //dummyCube.transform.Translate(Vector3.right*0.1f*Time.deltaTime);
         //Debug.Log(dummyCube.transform.position);
+        
+        
         
         if (!WiimoteManager.HasWiimote()) { return; }
 
