@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9cb7b5b5-c13c-4fea-9a30-55d093e94f56" name="Default Changelist" comment="" />
+    <list default="true" id="9cb7b5b5-c13c-4fea-9a30-55d093e94f56" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../../testlab/Library/ArtifactDB" beforeDir="false" afterPath="$PROJECT_DIR$/../../testlab/Library/ArtifactDB" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../testlab/Library/SourceAssetDB" beforeDir="false" afterPath="$PROJECT_DIR$/../../testlab/Library/SourceAssetDB" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../testlab/Library/shadercompiler-UnityShaderCompiler0.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../testlab/Library/shadercompiler-UnityShaderCompiler0.log" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +100,7 @@
       <workItem from="1568067923553" duration="1650000" />
       <workItem from="1568313556099" duration="5234000" />
       <workItem from="1568720458979" duration="24000" />
-      <workItem from="1568720513719" duration="4823000" />
+      <workItem from="1568720513719" duration="5031000" />
     </task>
     <servers />
   </component>

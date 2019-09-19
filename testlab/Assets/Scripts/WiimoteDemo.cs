@@ -39,22 +39,26 @@ public class WiimoteDemo : MonoBehaviour
 
     public float[] accs; 
     public float testAccelerationValue = 0;
+
+    public float tempTime;
+    public float timeInterval = 1;
+
+    public bool firstTime = true;
     
     private float InertialTest(float acceleration, float velocity0, float time, float distance0)
     {
+        // Berechnung der Inertial Navigation laut Formel
+        
         if (!inertialActivated) return 0f;
      
         Debug.Log("InertialTest running...");
 
         a = acceleration;
-        //v0 = velocity0;
         t = time;
-        //s0 = distance0;
-        
-      
-        
+
         // 1. Ableitung
         v = a * t + v0;
+        
         // 2. Ableitung
         s = (a / 2f) * Mathf.Pow(t, 2f) + v * t + s0;
         
@@ -64,26 +68,30 @@ public class WiimoteDemo : MonoBehaviour
         // new s0
         s0 = s;
         
-        //Debug.Log(s);
         return s;
-
     }
     
     void Start() {
         inertial=new InertialNavigation();
         //InvokeRepeating("InertialTestTest",1.0f, 1.0f);
         initial_rotation = model.rot.localRotation;
-        
-        // set s0 to the original position
-        //s0 = dummyCube.transform.position.x;
     }
 
-	void Update () {
-
+	void Update ()
+    {
+        tempTime += Time.deltaTime;
+        
         if (!WiimoteManager.HasWiimote()) { return; }
 
+       // initialisierung 
+       
         wiimote = WiimoteManager.Wiimotes[0];
-
+        if (firstTime)
+        {
+            wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
+        }
+        firstTime = false;
+        
         int ret;
         do
         {
@@ -101,36 +109,41 @@ public class WiimoteDemo : MonoBehaviour
                 model.rot.Rotate(offset, Space.Self);
             }
         } while (ret > 0);
-
-        //ReadOnlyArray<int> acc = wiimote.Accel.accel;
-        //Debug.Log("Accel: "+acc[0] + " | " +acc[1]+" | "+ acc[2]);
         
-        //accs = wiimote.Accel.GetCalibratedAccelData();
-        //Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
         
-        Debug.Log("GetAccelVector: "+GetAccelVector());
+        // speichere die Accelerometerwerte der wiimote in ein Array
         
-        //Debug.Log(GetAccelVector());
+        accs = wiimote.Accel.GetCalibratedAccelData();
         
-        timer +=Time.deltaTime;
+        Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
         
-        //float x_A = InertialTest(accs[0], v0, timer, s0);
-        //float y_A=InertialTest(accs[1], v0, timer, s0);
-        //float z_A=InertialTest(accs[2], v0, timer, s0);
-        //Debug.Log("ACC_CALC: X: "+x_A+" Y: "+y_A+ " Z: "+z_A);
-        //dummyCube.transform.position += new Vector3(x_A,y_A,z_A);
-        //testAccelerationValue = testAccelerationValue + 0.1f;
+        // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
         
-  
+        float xA = InertialTest(accs[0], v0, tempTime, s0);
+        float yA = InertialTest(accs[1], v0, tempTime, s0);
+        float zA = InertialTest(accs[2], v0, tempTime, s0);
+       
+        Debug.Log("ACC_CALC: X: "+xA+" Y: "+yA+ " Z: "+zA);
         
-        //dummyCube.transform.Translate(Vector3.right*0.1f*Time.deltaTime);
-        //Debug.Log(dummyCube.transform.position);
+        // addiere Positionsänderung auf den orangen dummyCube
+        
+        dummyCube.transform.position += new Vector3(xA,yA,zA);
+        
+        /*
+      // führe functions alle timeInterval Sekunden aus
+      if (tempTime >timeInterval)
+      {
+          tempTime = 0;
+          Debug.Log("Zeitintervall: "+ timeInterval);
+          // functions...
+      }
+      */
         
         
         // button handler
         
         model.a.enabled = wiimote.Button.a;
-        // Micha
+        
         if (model.a.enabled)
         {
             Debug.Log("A pressed");
@@ -220,12 +233,8 @@ public class WiimoteDemo : MonoBehaviour
         if (GUILayout.Button("B/A/Ext16", GUILayout.Width(300 / 4)))
         {
             wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
-            // Accelerometer test implementation
-            float x_A = InertialTest(accs[0], v0, timer, s0);
-            float y_A=InertialTest(accs[1], v0, timer, s0);
-            float z_A=InertialTest(accs[2], v0, timer, s0);
-            Debug.Log("ACC_CALC: X: "+x_A+" Y: "+y_A+ " Z: "+z_A);
-            dummyCube.transform.position += new Vector3(x_A,y_A,z_A);
+            Debug.Log("Test "+InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
+            
         }
            
         if(GUILayout.Button("Ext21", GUILayout.Width(300/4)))
@@ -367,8 +376,8 @@ public class WiimoteDemo : MonoBehaviour
         accel_y = -accel[2];
         accel_z = -accel[1];
         
-        // could be wrong, normalisation takes min and max values and calculates them into 0...1
-        return new Vector3(accel_x, accel_y, accel_z);
+        // could be wrong, normalisation should take min and max values and calculate them into 0...1
+        return new Vector3(accel_x, accel_y, accel_z).normalized;
     }
 
     [System.Serializable]
