@@ -13,6 +13,7 @@ public class WiimoteDemo : MonoBehaviour
     public InertialNavigation inertial;
 
     public GameObject dummyCube;
+    
 
     public WiimoteModel model;
     public RectTransform[] ir_dots;
@@ -80,6 +81,7 @@ public class WiimoteDemo : MonoBehaviour
 	void Update ()
     {
         tempTime += Time.deltaTime;
+        Debug.Log(transform.forward);
         
         if (!WiimoteManager.HasWiimote()) { return; }
 
@@ -92,6 +94,8 @@ public class WiimoteDemo : MonoBehaviour
             
             int[,] caldata = { { 464, 500, 600 }, { 499, 600, 500 }, { 596, 497, 500 } };
             wiimote.Accel.accel_calib = caldata; 
+            wiimote.RequestIdentifyWiiMotionPlus();
+            wiimote.ActivateWiiMotionPlus();
         }
         firstTime = false;
         
@@ -357,7 +361,7 @@ public class WiimoteDemo : MonoBehaviour
         MotionPlusData data = wiimote.MotionPlus;
         data.SetZeroValues();
         model.rot.rotation = Quaternion.FromToRotation(model.rot.rotation * GetAccelVector(), Vector3.up) * model.rot.rotation;
-        model.rot.rotation = Quaternion.FromToRotation(model.rot.forward, Vector3.forward) * model.rot.rotation;
+        model.rot.rotation = Quaternion.FromToRotation(model.rot.forward, transform.forward) * model.rot.rotation;
     }
 
     // Micha
