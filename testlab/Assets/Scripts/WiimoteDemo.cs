@@ -89,6 +89,9 @@ public class WiimoteDemo : MonoBehaviour
         if (firstTime)
         {
             wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
+            
+            int[,] caldata = { { 464, 500, 600 }, { 499, 600, 500 }, { 596, 497, 500 } };
+            wiimote.Accel.accel_calib = caldata; 
         }
         firstTime = false;
         
@@ -114,30 +117,32 @@ public class WiimoteDemo : MonoBehaviour
         // speichere die Accelerometerwerte der wiimote in ein Array
         
         accs = wiimote.Accel.GetCalibratedAccelData();
-        
         Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
-        
-        // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
-        
-        float xA = InertialTest(accs[0], v0, tempTime, s0);
-        float yA = InertialTest(accs[1], v0, tempTime, s0);
-        float zA = InertialTest(accs[2], v0, tempTime, s0);
-       
-        Debug.Log("ACC_CALC: X: "+xA+" Y: "+yA+ " Z: "+zA);
-        
-        // addiere Positionsänderung auf den orangen dummyCube
-        
-        dummyCube.transform.position += new Vector3(xA,yA,zA);
+        //ReadOnlyArray<int> accs_raw = wiimote.Accel.accel;
+        //Debug.Log(accs_raw[0]+ " | " + accs_raw[1] + " | "+ accs_raw[2]);
         
         /*
-      // führe functions alle timeInterval Sekunden aus
-      if (tempTime >timeInterval)
-      {
-          tempTime = 0;
-          Debug.Log("Zeitintervall: "+ timeInterval);
-          // functions...
-      }
-      */
+       // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
+       
+       float xA = InertialTest(accs[0], v0, tempTime, s0);
+       float yA = InertialTest(accs[1], v0, tempTime, s0);
+       float zA = InertialTest(accs[2], v0, tempTime, s0);
+      
+       Debug.Log("ACC_CALC: X: "+xA+" Y: "+yA+ " Z: "+zA);
+       
+       // addiere Positionsänderung auf den orangen dummyCube
+       
+       dummyCube.transform.position += new Vector3(xA,yA,zA);
+       
+      
+     // führe functions alle timeInterval Sekunden aus
+     if (tempTime >timeInterval)
+     {
+         tempTime = 0;
+         Debug.Log("Zeitintervall: "+ timeInterval);
+         // functions...
+     }
+     */
         
         
         // button handler
@@ -270,7 +275,10 @@ public class WiimoteDemo : MonoBehaviour
         {
             AccelCalibrationStep step = (AccelCalibrationStep)x;
             if (GUILayout.Button(step.ToString(), GUILayout.Width(100)))
+            {
                 wiimote.Accel.CalibrateAccel(step);
+            }
+                
         }
         GUILayout.EndHorizontal();
 
