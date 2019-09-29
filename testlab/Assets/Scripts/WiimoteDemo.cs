@@ -45,7 +45,7 @@ public class WiimoteDemo : MonoBehaviour
     public float timeInterval = 1;
 
     public bool firstTime = true;
-    
+
     private float InertialTest(float acceleration, float velocity0, float time, float distance0)
     {
         // Berechnung der Inertial Navigation laut Formel
@@ -71,7 +71,33 @@ public class WiimoteDemo : MonoBehaviour
         
         return s;
     }
-    
+
+    private float TransformationTest(float alpha, float beta, float gamma)
+    {
+        Debug.Log("Rotation: "+alpha+" | "+beta+" | "+gamma+" | ");
+        
+        float dx1 = Mathf.Cos(gamma) * Mathf.Cos(alpha) - Mathf.Sin(gamma) * Mathf.Sin(beta) * Mathf.Sin(alpha);
+        float dx2 = -Mathf.Sin(gamma) * Mathf.Cos(beta);
+        float dx3 = -Mathf.Cos(alpha) * Mathf.Sin(beta) * Mathf.Sin(gamma) + Mathf.Sin(alpha) * Mathf.Cos(gamma);
+
+        float dy1 = Mathf.Sin(beta) * Mathf.Sin(alpha) * Mathf.Cos(gamma) - Mathf.Cos(alpha) * Mathf.Sin(gamma);
+        float dy2 = Mathf.Cos(gamma) * Mathf.Cos(beta);
+        float dy3 = Mathf.Cos(gamma) * Mathf.Sin(beta) * Mathf.Cos(alpha) + Mathf.Sin(gamma) * Mathf.Sin(alpha);
+
+        float dz1 = Mathf.Cos(beta) * Mathf.Sin(alpha);
+        float dz2 = -Mathf.Sin(beta);
+        float dz3 = -Mathf.Cos(beta) * Mathf.Cos(alpha);
+        
+        float[, ] result = new float[3,3]
+        {
+            {dx1, dx2, dx3},
+            {dy1, dy2, dy3},
+            {dz1, dz2, dz3}
+            
+        };
+        Debug.Log("Matrix: " + result);
+        return 1;
+    }
     void Start() {
         inertial=new InertialNavigation();
         //InvokeRepeating("InertialTestTest",1.0f, 1.0f);
@@ -81,7 +107,8 @@ public class WiimoteDemo : MonoBehaviour
 	void Update ()
     {
         tempTime += Time.deltaTime;
-        Debug.Log(transform.forward);
+        //Debug.Log(transform.forward);
+        TransformationTest(model.rot.rotation.x, model.rot.rotation.y, model.rot.rotation.z);
         
         if (!WiimoteManager.HasWiimote()) { return; }
 
