@@ -74,7 +74,7 @@ public class WiimoteDemo : MonoBehaviour
 
     private float TransformationTest(float alpha, float beta, float gamma)
     {
-        Debug.Log("Rotation: "+alpha+" | "+beta+" | "+gamma+" | ");
+        //Debug.Log("Rotation: "+alpha+" | "+beta+" | "+gamma+" | ");
         
         float dx1 = Mathf.Cos(gamma) * Mathf.Cos(alpha) - Mathf.Sin(gamma) * Mathf.Sin(beta) * Mathf.Sin(alpha);
         float dx2 = -Mathf.Sin(gamma) * Mathf.Cos(beta);
@@ -95,11 +95,47 @@ public class WiimoteDemo : MonoBehaviour
             {dz1, dz2, dz3}
             
         };
-        Debug.Log("Matrix: " + result);
+        //Debug.Log("Matrix: " + result);
+        return 1;
+    }
+
+    private float RemoveGravity(float rotX, float rotY, float rotZ, float accelX, float accelY, float accelZ)
+    {
+       
+        float[] accel={0,0,0}; //accelerometer data
+        float[] gravity={0,0,1.0f}; //gravity downwards g = 1.0
+        float[] rotatedGravity = new float[3];
+        float[] motionAcceleration = new float[3];
+
+        float pan = rotX; //from gyro
+        float tilt = rotY; //from gyro
+        float roll = rotZ; //from gyro
+
+        float[, ] rotationMatrix= new float[3,3]
+        {
+            { Mathf.Cos(pan)*Mathf.Cos(tilt) , Mathf.Cos(pan)*Mathf.Sin(tilt)*Mathf.Sin(roll) - Mathf.Sin(pan)*Mathf.Cos(roll) , Mathf.Cos(pan)*Mathf.Sin(tilt)*Mathf.Cos(roll) + Mathf.Sin(pan)*Mathf.Sin(roll)},
+            { Mathf.Sin(pan)*Mathf.Cos(tilt) , Mathf.Sin(pan)*Mathf.Sin(tilt)*Mathf.Sin(roll) + Mathf.Cos(pan)*Mathf.Cos(roll) , Mathf.Sin(pan)*Mathf.Sin(tilt)*Mathf.Cos(roll) - Mathf.Cos(pan)*Mathf.Sin(roll)},
+            {     -1* Mathf.Sin(tilt)    ,                  Mathf.Cos(tilt) * Mathf.Sin(roll)                 ,               Mathf.Cos(tilt) * Mathf.Cos(roll)                   }
+        };
+        //Debug.Log("Rotation Matrix: "+ rotationMatrix[0,0] +" | " + rotationMatrix[0,1] +" | " + rotationMatrix[0,2]);
+
+        rotatedGravity[0]= gravity[0]*rotationMatrix[0,0] + gravity[1]*rotationMatrix[0,1] + gravity[2]*rotationMatrix[0,2] ;
+        rotatedGravity[1]= gravity[1]*rotationMatrix[1,0] + gravity[1]*rotationMatrix[1,1] + gravity[2]*rotationMatrix[1,2] ;
+        rotatedGravity[2]= gravity[2]*rotationMatrix[2,0] + gravity[1]*rotationMatrix[2,1] + gravity[2]*rotationMatrix[2,2] ;
+
+        //Debug.Log("Rotated Gravity: " +rotatedGravity[0]);
+
+        motionAcceleration[0]=accel[0]-rotatedGravity[0];
+        motionAcceleration[1]=accel[1]-rotatedGravity[1];
+        motionAcceleration[2]=accel[2]-rotatedGravity[2];
+        
+        Debug.Log("Motion Acceleration: " +motionAcceleration[0]+ " | " +motionAcceleration[1]+ " | " +motionAcceleration[2]);
+        
+        
         return 1;
     }
     void Start() {
-        inertial=new InertialNavigation();
+        //inertial=new InertialNavigation();
         //InvokeRepeating("InertialTestTest",1.0f, 1.0f);
         initial_rotation = model.rot.localRotation;
     }
@@ -108,7 +144,9 @@ public class WiimoteDemo : MonoBehaviour
     {
         tempTime += Time.deltaTime;
         //Debug.Log(transform.forward);
-        TransformationTest(model.rot.rotation.x, model.rot.rotation.y, model.rot.rotation.z);
+        //TransformationTest(model.rot.transform.localRotation.eulerAngles.x, model.rot.transform.localRotation.eulerAngles.y, model.rot.transform.localRotation.eulerAngles.z);
+     
+        
         
         if (!WiimoteManager.HasWiimote()) { return; }
 
@@ -149,6 +187,14 @@ public class WiimoteDemo : MonoBehaviour
         
         accs = wiimote.Accel.GetCalibratedAccelData();
         Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
+        RemoveGravity(
+            model.rot.transform.localRotation.eulerAngles.x, 
+            model.rot.transform.localRotation.eulerAngles.y,
+            model.rot.transform.localRotation.eulerAngles.z,
+            accs[0],
+            accs[1],
+            accs[2]
+            );
         //ReadOnlyArray<int> accs_raw = wiimote.Accel.accel;
         //Debug.Log(accs_raw[0]+ " | " + accs_raw[1] + " | "+ accs_raw[2]);
         
