@@ -106,11 +106,11 @@ public class WiimoteDemo : MonoBehaviour
         float[] gravity={0,0,1.0f}; //gravity downwards g = 1.0
         float[] rotatedGravity = new float[3];
         float[] motionAcceleration = new float[3];
-
+Debug.Log("RotX: "+rotX+" RotY: "+rotY+" RotZ: "+rotZ);
         float pan = rotX * Mathf.PI/180; //from gyro converted to rad
         float tilt = rotY * Mathf.PI/180; //from gyro converted to rad
         float roll = rotZ * Mathf.PI/180; //from gyro converted to rad
-
+Debug.Log("Pan: "+pan+ " Tilt: "+tilt+" Roll: "+roll);
         float[, ] rotationMatrix= new float[3,3]
         {
             { Mathf.Cos(pan)*Mathf.Cos(tilt) , Mathf.Cos(pan)*Mathf.Sin(tilt)*Mathf.Sin(roll) - Mathf.Sin(pan)*Mathf.Cos(roll) , Mathf.Cos(pan)*Mathf.Sin(tilt)*Mathf.Cos(roll) + Mathf.Sin(pan)*Mathf.Sin(roll)},
