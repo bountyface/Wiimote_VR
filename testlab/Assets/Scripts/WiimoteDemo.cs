@@ -107,9 +107,9 @@ public class WiimoteDemo : MonoBehaviour
         float[] rotatedGravity = new float[3];
         float[] motionAcceleration = new float[3];
 
-        float pan = rotX; //from gyro
-        float tilt = rotY; //from gyro
-        float roll = rotZ; //from gyro
+        float pan = rotX * Mathf.PI/180; //from gyro converted to rad
+        float tilt = rotY * Mathf.PI/180; //from gyro converted to rad
+        float roll = rotZ * Mathf.PI/180; //from gyro converted to rad
 
         float[, ] rotationMatrix= new float[3,3]
         {
