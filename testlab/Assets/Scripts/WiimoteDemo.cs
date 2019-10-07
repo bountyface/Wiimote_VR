@@ -100,7 +100,7 @@ public class WiimoteDemo : MonoBehaviour
         return 1;
     }
 
-    private float RemoveGravity(float rotX, float rotY, float rotZ, float accelX, float accelY, float accelZ)
+    public float RemoveGravity(float rotX, float rotY, float rotZ, float accelX, float accelY, float accelZ)
     {
 
         float[] accel = { accelX, accelY, accelZ }; //accelerometer data
@@ -108,28 +108,24 @@ public class WiimoteDemo : MonoBehaviour
         float[] rG = new float[3];
         float[] rA = new float[3];
         float[] mA = new float[3];
+        //double[] mAD = mA;
 
+        //    Debug.Log("RotX: " + rotX + " RotY: " + rotY + " RotZ: " + rotZ);
+        //Debug.Log("AccX: " + accelX + " AccY: " + accelY + " AccZ: " + accelZ);
 
-        Debug.Log("RotX: " + rotX + " RotY: " + rotY + " RotZ: " + rotZ);
-        Debug.Log("AccX: " + accelX + " AccY: " + accelY + " AccZ: " + accelZ);
-
-        float alpha = rotX* Mathf.PI/180; //from gyro converted to rad
-        float beta = rotY* Mathf.PI/180; //from gyro converted to rad
-        float theta = rotZ* Mathf.PI/180; //from gyro converted to rad
+        float alpha = rotX; // 90 * Mathf.PI/180; //from gyro converted to rad
+        float beta = rotY;//0* Mathf.PI/180; //from gyro converted to rad
+        float gamma = rotZ;// 0 * Mathf.PI/180; //from gyro converted to rad
         //Debug.Log("Pan: " + alpha + " Tilt: " + beta + " Roll: " + theta);
-
-
-
-
-
-
+        
 
         float[,] R = new float[3, 3]
         {
-            { Mathf.Cos(alpha)*Mathf.Cos(beta) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Sin(theta) - Mathf.Sin(alpha)*Mathf.Cos(theta) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Cos(theta) + Mathf.Sin(alpha)*Mathf.Sin(theta)},
-            { Mathf.Sin(alpha)*Mathf.Cos(beta) , Mathf.Sin(alpha)*Mathf.Sin(beta)*Mathf.Sin(theta) + Mathf.Cos(alpha)*Mathf.Cos(theta) , Mathf.Sin(alpha)*Mathf.Sin(beta)*Mathf.Cos(theta) - Mathf.Cos(alpha)*Mathf.Sin(theta)},
-            {     -1* Mathf.Sin(beta)    ,                  Mathf.Cos(beta) * Mathf.Sin(theta)                 ,               Mathf.Cos(beta) * Mathf.Cos(theta)                   }
+            { Mathf.Cos(alpha)*Mathf.Cos(beta) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Sin(gamma) - Mathf.Sin(alpha)*Mathf.Cos(gamma) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Cos(gamma) + Mathf.Sin(alpha)*Mathf.Sin(gamma)},
+            { Mathf.Sin(alpha)*Mathf.Cos(beta) , Mathf.Sin(alpha)*Mathf.Sin(beta)*Mathf.Sin(gamma) + Mathf.Cos(alpha)*Mathf.Cos(gamma) , Mathf.Sin(alpha)*Mathf.Sin(beta)*Mathf.Cos(gamma) - Mathf.Cos(alpha)*Mathf.Sin(gamma)},
+            {     -1* Mathf.Sin(beta)    ,                  Mathf.Cos(beta) * Mathf.Sin(gamma)                 ,               Mathf.Cos(beta) * Mathf.Cos(gamma)                   }
         };
+
         //Debug.Log("Rotation Matrix: "+ rotationMatrix[0,0] +" | " + rotationMatrix[0,1] +" | " + rotationMatrix[0,2]);
 
 
@@ -138,18 +134,28 @@ public class WiimoteDemo : MonoBehaviour
                     +R[0,2]*(R[1,0]*R[2, 1]-R[1, 1]*R[2, 0]);
 
 
-        Debug.Log("Determinante: " +det);
+        //Debug.Log("Determinante: " +det);
 
-
-
+        /*
         rG[0]= gravity[0]*R[0,0] + gravity[1]*R[0,1] + gravity[2]*R[0,2] ;
         rG[1]= gravity[0]*R[1,0] + gravity[1]*R[1,1] + gravity[2]*R[1,2] ;
         rG[2]= gravity[0]*R[2,0] + gravity[1]*R[2,1] + gravity[2]*R[2,2] ;
 
-
         rA[0] = accel[0] * R[0, 0] + accel[1] * R[0, 1] + accel[2] * R[0, 2];
         rA[1] = accel[0] * R[1, 0] + accel[1] * R[1, 1] + accel[2] * R[1, 2];
         rA[2] = accel[0] * R[2, 0] + accel[1] * R[2, 1] + accel[2] * R[2, 2];
+
+
+         */
+
+        rG[0]= gravity[0]*R[0,0] + gravity[0]*R[0,1] + gravity[0]*R[0,2] ;
+        rG[1]= gravity[1]*R[1,0] + gravity[1]*R[1,1] + gravity[1]*R[1,2] ;
+        rG[2]= gravity[2]*R[2,0] + gravity[2]*R[2,1] + gravity[2]*R[2,2] ;
+
+
+        rA[0] = accel[0] * R[0, 0] + accel[0] * R[0, 1] + accel[0] * R[0, 2];
+        rA[1] = accel[1] * R[1, 0] + accel[1] * R[1, 1] + accel[1] * R[1, 2];
+        rA[2] = accel[2] * R[2, 0] + accel[2] * R[2, 1] + accel[2] * R[2, 2];
 
 
         Debug.Log("rA: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
@@ -162,23 +168,57 @@ public class WiimoteDemo : MonoBehaviour
         mA[2]=rA[2]-rG[2];
 
 
-       // Debug.Log("rA: " +rA[0]+ " | " +rA[1]+ " | " +rA[2]);
+        // Debug.Log("rA: " +rA[0]+ " | " +rA[1]+ " | " +rA[2]);
+
+        //rA[0] = mA[0] * R[0, 0] + mA[1] * R[1, 0] + mA[2] * R[2, 0];
+        //rA[1] = mA[0] * R[0, 1] + mA[1] * R[1, 1] + mA[2] * R[2, 1];
+        //rA[2] = mA[0] * R[0, 2] + mA[1] * R[1, 2] + mA[2] * R[2, 2];
 
 
-        rA[0] = mA[0] * R[0, 0] + mA[1] * R[1, 0] + mA[2] * R[2, 0];
-        rA[1] = mA[0] * R[0, 1] + mA[1] * R[1, 1] + mA[2] * R[2, 1];
-        rA[2] = mA[0] * R[0, 2] + mA[1] * R[1, 2] + mA[2] * R[2, 2];
-
-
+        rA[0] = mA[0] * R[0, 0] + mA[0] * R[1, 0] + mA[0] * R[2, 0];
+        rA[1] = mA[1] * R[0, 1] + mA[1] * R[1, 1] + mA[1] * R[2, 1];
+        rA[2] = mA[2] * R[0, 2] + mA[2] * R[1, 2] + mA[2] * R[2, 2];
 
 
         Debug.Log("A: " + accel[0] + " | " + accel[1] + " | " + accel[2]);
-        Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
+    //    Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
         Debug.Log("rG: " + rG[0] + " | " + rG[1] + " | " + rG[2]);
         Debug.Log("A-G: " + mA[0] + " | " + mA[1] + " | " + mA[2]);
+
         Debug.Log("A-G earthframe: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
 
 
+        return 1;
+    } 
+
+    private float RemoveGravity2( float rotX, float rotY, float rotZ, float accX, float accY, float accZ)
+    {
+        
+            float vecXAxis = accX;
+            float vecYAxis = accY;
+            float vecZAxis = accZ;
+            
+            float yawRad = rotX* Mathf.PI/180; //from gyro converted to rad
+            float pitchRad = rotY* Mathf.PI/180; //from gyro converted to rad
+            float rollRad = rotZ* Mathf.PI/180; //from gyro converted to rad
+            
+
+            float x = accX, y = accY, z = 0;
+            vecXAxis -= x * Mathf.Cos(yawRad) - y * Mathf.Sin(yawRad) ;
+            vecYAxis -= x * Mathf.Sin(yawRad) - y * Mathf.Cos(yawRad) ;
+
+            x = vecXAxis; z = vecZAxis;
+            vecXAxis -=  x * Mathf.Cos(pitchRad) + z * Mathf.Sin(pitchRad) ;
+            vecZAxis -= - x * Mathf.Sin(pitchRad) + z * Mathf.Cos(pitchRad) ;
+
+            y = vecYAxis; z = vecZAxis;
+            vecYAxis -=  y * Mathf.Cos(rollRad) - z * Mathf.Sin(rollRad);
+            vecZAxis -=  y * Mathf.Sin(rollRad) + z * Mathf.Cos(rollRad);
+
+            Debug.Log("Vec: "+ vecXAxis+ " | " +vecYAxis+ " | " +vecZAxis);
+
+          
+            
         return 1;
     }
     void Start() {
@@ -234,7 +274,8 @@ public class WiimoteDemo : MonoBehaviour
 
         accs = wiimote.Accel.GetCalibratedAccelData();
        // Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
-        RemoveGravity(
+       
+       RemoveGravity(
             model.rot.transform.localRotation.eulerAngles.x,
             model.rot.transform.localRotation.eulerAngles.y,
             model.rot.transform.localRotation.eulerAngles.z,
@@ -242,31 +283,42 @@ public class WiimoteDemo : MonoBehaviour
             accs[1],
             accs[2]
             );
-        //ReadOnlyArray<int> accs_raw = wiimote.Accel.accel;
-        //Debug.Log(accs_raw[0]+ " | " + accs_raw[1] + " | "+ accs_raw[2]);
+            
+            /* 
+    RemoveGravity2(
+        model.rot.transform.localRotation.eulerAngles.x,
+        model.rot.transform.localRotation.eulerAngles.y,
+        model.rot.transform.localRotation.eulerAngles.z,
+        accs[0],
+        accs[1],
+        accs[2]
+        );
+        */
+    //ReadOnlyArray<int> accs_raw = wiimote.Accel.accel;
+    //Debug.Log(accs_raw[0]+ " | " + accs_raw[1] + " | "+ accs_raw[2]);
 
-        /*
-       // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
+    /*
+   // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
 
-       float xA = InertialTest(accs[0], v0, tempTime, s0);
-       float yA = InertialTest(accs[1], v0, tempTime, s0);
-       float zA = InertialTest(accs[2], v0, tempTime, s0);
+   float xA = InertialTest(accs[0], v0, tempTime, s0);
+   float yA = InertialTest(accs[1], v0, tempTime, s0);
+   float zA = InertialTest(accs[2], v0, tempTime, s0);
 
-       Debug.Log("ACC_CALC: X: "+xA+" Y: "+yA+ " Z: "+zA);
+   Debug.Log("ACC_CALC: X: "+xA+" Y: "+yA+ " Z: "+zA);
 
-       // addiere Positionsänderung auf den orangen dummyCube
+   // addiere Positionsänderung auf den orangen dummyCube
 
-       dummyCube.transform.position += new Vector3(xA,yA,zA);
+   dummyCube.transform.position += new Vector3(xA,yA,zA);
 
 
-     // führe functions alle timeInterval Sekunden aus
-     if (tempTime >timeInterval)
-     {
-         tempTime = 0;
-         Debug.Log("Zeitintervall: "+ timeInterval);
-         // functions...
-     }
-     */
+ // führe functions alle timeInterval Sekunden aus
+ if (tempTime >timeInterval)
+ {
+     tempTime = 0;
+     Debug.Log("Zeitintervall: "+ timeInterval);
+     // functions...
+ }
+ */
 
 
         // button handler
