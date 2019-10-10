@@ -181,9 +181,9 @@
     <Compile Include="Assets\GoogleVR\Scripts\Utilities\Internal\GvrCursorHelper.cs" />
     <Compile Include="Assets\GoogleVR\Scripts\Utilities\Internal\SuppressMemoryAllocationErrorAttribute.cs" />
     <Compile Include="Assets\GoogleVR\Scripts\Video\GvrVideoPlayerTexture.cs" />
-    <Compile Include="Assets\Laser.cs" />
     <Compile Include="Assets\Scripts\ExtDataDemo.cs" />
     <Compile Include="Assets\Scripts\InertialNavigation.cs" />
+    <Compile Include="Assets\Scripts\Laser.cs" />
     <Compile Include="Assets\Scripts\MenuScript.cs" />
     <Compile Include="Assets\Scripts\WiimoteDemo.cs" />
     <Compile Include="Assets\Wiimote\Scripts\Enums.cs" />

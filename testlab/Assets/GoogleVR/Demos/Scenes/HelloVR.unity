@@ -308,7 +308,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
 --- !u!114 &87105735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -665,7 +665,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 226055404}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9f9448243ea8384095a95e23a5d8037, type: 3}
   m_Name: 
@@ -1419,6 +1419,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dummyCube: {fileID: 1293998856}
   laser: {fileID: 1138774516}
+  optionAButton: {fileID: 1132641159}
+  optionAColorblock:
+    m_NormalColor: {r: 0, g: 0, b: 0, a: 0}
+    m_HighlightedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_SelectedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_DisabledColor: {r: 0, g: 0, b: 0, a: 0}
+    m_ColorMultiplier: 0
+    m_FadeDuration: 0
+  optionAClicked: 0
   model:
     rot: {fileID: 2142739595}
     a: {fileID: 1821284301}
@@ -1562,7 +1572,7 @@ GameObject:
   - component: {fileID: 1132641159}
   - component: {fileID: 1132641162}
   m_Layer: 5
-  m_Name: Option A
+  m_Name: OptionA
   m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

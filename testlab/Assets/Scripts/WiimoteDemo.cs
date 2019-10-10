@@ -15,6 +15,10 @@ public class WiimoteDemo : MonoBehaviour
 
     public GameObject dummyCube;
     public GameObject laser;
+    
+    public Button optionAButton;
+    public ColorBlock optionAColorblock;
+    public bool optionAClicked = false;
 
     public WiimoteModel model;
     public RectTransform[] ir_dots;
@@ -37,7 +41,7 @@ public class WiimoteDemo : MonoBehaviour
     public float a;
     public float t;
     public float s;
-    public float s0=0;
+    public float s0 = 0;
 
     public float[] accs;
     public float testAccelerationValue = 0;
@@ -225,6 +229,8 @@ public class WiimoteDemo : MonoBehaviour
         //inertial=new InertialNavigation();
         //InvokeRepeating("InertialTestTest",1.0f, 1.0f);
         initial_rotation = model.rot.localRotation;
+        optionAColorblock = optionAButton.colors;
+        optionAColorblock.highlightedColor = new Color32(255,100,100,255);
     }
 
     void Update ()
@@ -338,9 +344,10 @@ public class WiimoteDemo : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(laser.transform.position, laser.transform.forward, out hit))
             {
-                if (hit.collider.tag == "Button")
+                if (hit.collider.gameObject.name == "OptionA")
                 {
                     print("Hit: "+ hit.collider.gameObject.name);
+                    OptionAClick();
                 }
             }
         };
@@ -599,6 +606,30 @@ public class WiimoteDemo : MonoBehaviour
         if (wiimote != null) {
             WiimoteManager.Cleanup(wiimote);
             wiimote = null;
+        }
+    }
+    public void OptionAClick()
+    {
+        
+        Debug.Log("Option A clicked");
+        //optionAColorblock.normalColor = optionAColorblock.pressedColor;
+        //optionAColorblock.normalColor = new Color32(255,100,100,255);
+        if (!optionAClicked)
+        {
+            optionAColorblock.highlightedColor = new Color32(100,255,100,255);
+            optionAColorblock.pressedColor = new Color32(100,255,100,255);
+            optionAColorblock.normalColor = new Color32(100,255,100,255);
+            optionAButton.colors = optionAColorblock;
+            
+            optionAClicked = true;
+        }
+        else
+        {
+            
+            optionAColorblock.pressedColor = new Color32(255,255,255,255);
+            optionAColorblock.normalColor = new Color32(255,255,255,255);
+            optionAButton.colors = optionAColorblock;
+            optionAClicked = false;
         }
     }
 }

@@ -262,10 +262,10 @@
             </e>
           </e>
         </e>
-        <e p="Laser.cs" t="Include" />
         <e p="Scripts" t="Include">
           <e p="ExtDataDemo.cs" t="Include" />
           <e p="InertialNavigation.cs" t="Include" />
+          <e p="Laser.cs" t="Include" />
           <e p="MenuScript.cs" t="Include" />
           <e p="WiimoteDemo.cs" t="Include" />
         </e>
