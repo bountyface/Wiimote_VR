@@ -19,17 +19,17 @@ public class Laser : MonoBehaviour
         {
             Debug.DrawLine(transform.position, hit.point);
             print(hit.transform.name);
-            /*
+            
             if (hit.collider)
             {
                 lr.SetPosition(1, new Vector3(0,0,hit.distance));
             }
-            */
+            
         }
-       /* else
+        else
         {
             lr.SetPosition(1,new Vector3(0,0,5000));
         }
-*/
+
     }
 }

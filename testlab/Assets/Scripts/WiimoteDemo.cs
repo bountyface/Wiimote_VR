@@ -19,6 +19,8 @@ public class WiimoteDemo : MonoBehaviour
     public Button optionAButton;
     public ColorBlock optionAColorblock;
     public bool optionAClicked = false;
+    private LineRenderer myLineRenderer;
+    
 
     public WiimoteModel model;
     public RectTransform[] ir_dots;
@@ -231,6 +233,7 @@ public class WiimoteDemo : MonoBehaviour
         initial_rotation = model.rot.localRotation;
         optionAColorblock = optionAButton.colors;
         optionAColorblock.highlightedColor = new Color32(255,100,100,255);
+        myLineRenderer = laser.GetComponent<LineRenderer>();
     }
 
     void Update ()
@@ -338,9 +341,14 @@ public class WiimoteDemo : MonoBehaviour
             ResetOffset();
         };
         model.b.enabled = wiimote.Button.b;
+        if (!model.b.enabled)
+        {
+            myLineRenderer.enabled = false;
+        }
         if (model.b.enabled)
         {
             Debug.Log("B pressed");
+            myLineRenderer.enabled = true;
             RaycastHit hit;
             if (Physics.Raycast(laser.transform.position, laser.transform.forward, out hit))
             {
@@ -351,7 +359,6 @@ public class WiimoteDemo : MonoBehaviour
                 }
             }
         };
-        
         model.one.enabled = wiimote.Button.one;
         model.two.enabled = wiimote.Button.two;
         model.d_up.enabled = wiimote.Button.d_up;
