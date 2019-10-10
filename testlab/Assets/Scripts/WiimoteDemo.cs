@@ -14,7 +14,7 @@ public class WiimoteDemo : MonoBehaviour
     public InertialNavigation inertial;
 
     public GameObject dummyCube;
-
+    public GameObject laser;
 
     public WiimoteModel model;
     public RectTransform[] ir_dots;
@@ -158,7 +158,7 @@ public class WiimoteDemo : MonoBehaviour
         rA[2] = accel[2] * R[2, 0] + accel[2] * R[2, 1] + accel[2] * R[2, 2];
 
 
-        Debug.Log("rA: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
+        //Debug.Log("rA: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
 
 
         //Debug.Log("Rotated Gravity: " +rotatedGravity[0]);
@@ -179,7 +179,7 @@ public class WiimoteDemo : MonoBehaviour
         rA[1] = mA[1] * R[0, 1] + mA[1] * R[1, 1] + mA[1] * R[2, 1];
         rA[2] = mA[2] * R[0, 2] + mA[2] * R[1, 2] + mA[2] * R[2, 2];
 
-
+/*
         Debug.Log("A: " + accel[0] + " | " + accel[1] + " | " + accel[2]);
     //    Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
         Debug.Log("rG: " + rG[0] + " | " + rG[1] + " | " + rG[2]);
@@ -187,7 +187,7 @@ public class WiimoteDemo : MonoBehaviour
 
         Debug.Log("A-G earthframe: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
 
-
+*/
         return 1;
     } 
 
@@ -332,6 +332,19 @@ public class WiimoteDemo : MonoBehaviour
             ResetOffset();
         };
         model.b.enabled = wiimote.Button.b;
+        if (model.b.enabled)
+        {
+            Debug.Log("B pressed");
+            RaycastHit hit;
+            if (Physics.Raycast(laser.transform.position, laser.transform.forward, out hit))
+            {
+                if (hit.collider.tag == "Button")
+                {
+                    print("Hit: "+ hit.collider.gameObject.name);
+                }
+            }
+        };
+        
         model.one.enabled = wiimote.Button.one;
         model.two.enabled = wiimote.Button.two;
         model.d_up.enabled = wiimote.Button.d_up;
@@ -375,7 +388,8 @@ public class WiimoteDemo : MonoBehaviour
         float[] pointer = wiimote.Ir.GetPointingPosition();
         ir_pointer.anchorMin = new Vector2(pointer[0], pointer[1]);
         ir_pointer.anchorMax = new Vector2(pointer[0], pointer[1]);
-        Debug.Log("Accel: "+wiimote.Accel.GetCalibratedAccelData());
+        
+        //Debug.Log("Accel: "+wiimote.Accel.GetCalibratedAccelData());
     }
 
     void OnGUI()
