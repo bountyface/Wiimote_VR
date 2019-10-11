@@ -18,7 +18,7 @@ public class Laser : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, out hit))
         {
             Debug.DrawLine(transform.position, hit.point);
-            print(hit.transform.name);
+            // print(hit.transform.name);
             
             if (hit.collider)
             {

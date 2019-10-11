@@ -4,7 +4,6 @@
     <list default="true" id="9cb7b5b5-c13c-4fea-9a30-55d093e94f56" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.testlab/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.testlab/.idea/indexLayout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.testlab/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.testlab/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GoogleVR/Demos/Scenes/HelloVR.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/GoogleVR/Demos/Scenes/HelloVR.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Laser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Laser.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/WiimoteDemo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WiimoteDemo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Library/ArtifactDB" beforeDir="false" afterPath="$PROJECT_DIR$/Library/ArtifactDB" afterDir="false" />
@@ -15,7 +14,8 @@
       <change beforePath="$PROJECT_DIR$/Library/ScriptAssemblies/Assembly-CSharp.dll" beforeDir="false" afterPath="$PROJECT_DIR$/Library/ScriptAssemblies/Assembly-CSharp.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Library/ScriptAssemblies/Assembly-CSharp.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Library/ScriptAssemblies/Assembly-CSharp.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Library/SourceAssetDB" beforeDir="false" afterPath="$PROJECT_DIR$/Library/SourceAssetDB" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Library/StateCache/SceneView/2adf28-mainStage.json" beforeDir="false" afterPath="$PROJECT_DIR$/Library/StateCache/SceneView/2adf28-mainStage.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Library/StateCache/Hierarchy/fdd6bc-mainStage.json" beforeDir="false" afterPath="$PROJECT_DIR$/Library/StateCache/Hierarchy/fdd6bc-mainStage.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Library/shadercompiler-UnityShaderCompiler.exe0.log" beforeDir="false" afterPath="$PROJECT_DIR$/Library/shadercompiler-UnityShaderCompiler.exe0.log" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -162,6 +162,7 @@
       <workItem from="1570712486230" duration="1472000" />
       <workItem from="1570714025732" duration="179000" />
       <workItem from="1570715144717" duration="1214000" />
+      <workItem from="1570784218173" duration="3050000" />
     </task>
     <servers />
   </component>
@@ -210,13 +211,13 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Assets/Scripts/WiimoteDemo.cs</url>
-          <line>625</line>
+          <line>621</line>
           <properties documentPath="$PROJECT_DIR$/Assets/Scripts/WiimoteDemo.cs" initialLine="618">
             <startOffsets>
-              <option value="22605" />
+              <option value="22632" />
             </startOffsets>
             <endOffsets>
-              <option value="22671" />
+              <option value="22698" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="2" />

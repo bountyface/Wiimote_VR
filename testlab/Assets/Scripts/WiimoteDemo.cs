@@ -108,23 +108,25 @@ public class WiimoteDemo : MonoBehaviour
 
     public float RemoveGravity(float rotX, float rotY, float rotZ, float accelX, float accelY, float accelZ)
     {
-
+        // prüfe input
+        // Debug.Log("RotX: " + rotX + " RotY: " + rotY + " RotZ: " + rotZ);
+        // Debug.Log("AccX: " + accelX + " AccY: " + accelY + " AccZ: " + accelZ);
+        
         float[] accel = { accelX, accelY, accelZ }; //accelerometer data
         float[] gravity = { 0, 0, 1.0f }; //gravity downwards g = 1.0
         float[] rG = new float[3];
         float[] rA = new float[3];
         float[] mA = new float[3];
-        //double[] mAD = mA;
+        // double[] mAD = mA;
 
-        //    Debug.Log("RotX: " + rotX + " RotY: " + rotY + " RotZ: " + rotZ);
-        //Debug.Log("AccX: " + accelX + " AccY: " + accelY + " AccZ: " + accelZ);
-
-        float alpha = rotX; // 90 * Mathf.PI/180; //from gyro converted to rad
-        float beta = rotY;//0* Mathf.PI/180; //from gyro converted to rad
-        float gamma = rotZ;// 0 * Mathf.PI/180; //from gyro converted to rad
-        //Debug.Log("Pan: " + alpha + " Tilt: " + beta + " Roll: " + theta);
         
 
+        float alpha = rotX; // * Mathf.PI/180; //from gyro converted to rad
+        float beta = rotY;// * Mathf.PI/180; //from gyro converted to rad
+        float gamma = rotZ;// * Mathf.PI/180; //from gyro converted to rad
+        //Debug.Log("Pan: " + alpha + " Tilt: " + beta + " Roll: " + theta);
+        
+        // rotation matrix
         float[,] R = new float[3, 3]
         {
             { Mathf.Cos(alpha)*Mathf.Cos(beta) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Sin(gamma) - Mathf.Sin(alpha)*Mathf.Cos(gamma) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Cos(gamma) + Mathf.Sin(alpha)*Mathf.Sin(gamma)},
@@ -134,14 +136,14 @@ public class WiimoteDemo : MonoBehaviour
 
         //Debug.Log("Rotation Matrix: "+ rotationMatrix[0,0] +" | " + rotationMatrix[0,1] +" | " + rotationMatrix[0,2]);
 
-
+/*
         float det =  R[0,0]*(R[1,1]*R[2, 2]-R[1, 2]*R[2, 1])/
                     -R[0,1]*(R[1,0]*R[2, 2]-R[1, 2]*R[2, 0])/
                     +R[0,2]*(R[1,0]*R[2, 1]-R[1, 1]*R[2, 0]);
 
 
         //Debug.Log("Determinante: " +det);
-
+*/
         /*
         rG[0]= gravity[0]*R[0,0] + gravity[1]*R[0,1] + gravity[2]*R[0,2] ;
         rG[1]= gravity[0]*R[1,0] + gravity[1]*R[1,1] + gravity[2]*R[1,2] ;
@@ -150,7 +152,6 @@ public class WiimoteDemo : MonoBehaviour
         rA[0] = accel[0] * R[0, 0] + accel[1] * R[0, 1] + accel[2] * R[0, 2];
         rA[1] = accel[0] * R[1, 0] + accel[1] * R[1, 1] + accel[2] * R[1, 2];
         rA[2] = accel[0] * R[2, 0] + accel[1] * R[2, 1] + accel[2] * R[2, 2];
-
 
          */
 
@@ -162,19 +163,13 @@ public class WiimoteDemo : MonoBehaviour
         rA[0] = accel[0] * R[0, 0] + accel[0] * R[0, 1] + accel[0] * R[0, 2];
         rA[1] = accel[1] * R[1, 0] + accel[1] * R[1, 1] + accel[1] * R[1, 2];
         rA[2] = accel[2] * R[2, 0] + accel[2] * R[2, 1] + accel[2] * R[2, 2];
-
-
+        
         //Debug.Log("rA: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
-
-
-        //Debug.Log("Rotated Gravity: " +rotatedGravity[0]);
-
+        
         mA[0]=rA[0]-rG[0];
         mA[1]=rA[1]-rG[1];
         mA[2]=rA[2]-rG[2];
-
-
-        // Debug.Log("rA: " +rA[0]+ " | " +rA[1]+ " | " +rA[2]);
+        
 
         //rA[0] = mA[0] * R[0, 0] + mA[1] * R[1, 0] + mA[2] * R[2, 0];
         //rA[1] = mA[0] * R[0, 1] + mA[1] * R[1, 1] + mA[2] * R[2, 1];
@@ -185,15 +180,15 @@ public class WiimoteDemo : MonoBehaviour
         rA[1] = mA[1] * R[0, 1] + mA[1] * R[1, 1] + mA[1] * R[2, 1];
         rA[2] = mA[2] * R[0, 2] + mA[2] * R[1, 2] + mA[2] * R[2, 2];
 
-/*
+
         Debug.Log("A: " + accel[0] + " | " + accel[1] + " | " + accel[2]);
-    //    Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
+        Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
         Debug.Log("rG: " + rG[0] + " | " + rG[1] + " | " + rG[2]);
         Debug.Log("A-G: " + mA[0] + " | " + mA[1] + " | " + mA[2]);
 
         Debug.Log("A-G earthframe: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
 
-*/
+
         return 1;
     } 
 
@@ -241,8 +236,6 @@ public class WiimoteDemo : MonoBehaviour
         tempTime += Time.deltaTime;
         //Debug.Log(transform.forward);
         //TransformationTest(model.rot.transform.localRotation.eulerAngles.x, model.rot.transform.localRotation.eulerAngles.y, model.rot.transform.localRotation.eulerAngles.z);
-
-
 
         if (!WiimoteManager.HasWiimote()) { return; }
 
@@ -334,6 +327,7 @@ public class WiimoteDemo : MonoBehaviour
 
         model.a.enabled = wiimote.Button.a;
 
+       
         if (model.a.enabled)
         {
             Debug.Log("A pressed");
@@ -341,8 +335,10 @@ public class WiimoteDemo : MonoBehaviour
             ResetOffset();
         };
         model.b.enabled = wiimote.Button.b;
+        
         if (!model.b.enabled)
         {
+            // laser aus, wenn b-button losgelassen wird.
             myLineRenderer.enabled = false;
         }
         if (model.b.enabled)
@@ -354,7 +350,7 @@ public class WiimoteDemo : MonoBehaviour
             {
                 if (hit.collider.gameObject.name == "OptionA")
                 {
-                    print("Hit: "+ hit.collider.gameObject.name);
+                    // print("Hit: "+ hit.collider.gameObject.name);
                     OptionAClick();
                 }
             }
