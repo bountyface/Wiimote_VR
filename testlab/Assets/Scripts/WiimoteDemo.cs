@@ -108,25 +108,23 @@ public class WiimoteDemo : MonoBehaviour
 
     public float RemoveGravity(float rotX, float rotY, float rotZ, float accelX, float accelY, float accelZ)
     {
-        // prüfe input
-        // Debug.Log("RotX: " + rotX + " RotY: " + rotY + " RotZ: " + rotZ);
-        // Debug.Log("AccX: " + accelX + " AccY: " + accelY + " AccZ: " + accelZ);
-        
+
         float[] accel = { accelX, accelY, accelZ }; //accelerometer data
         float[] gravity = { 0, 0, 1.0f }; //gravity downwards g = 1.0
         float[] rG = new float[3];
         float[] rA = new float[3];
         float[] mA = new float[3];
-        // double[] mAD = mA;
+        //double[] mAD = mA;
 
+        //    Debug.Log("RotX: " + rotX + " RotY: " + rotY + " RotZ: " + rotZ);
+        //Debug.Log("AccX: " + accelX + " AccY: " + accelY + " AccZ: " + accelZ);
+
+        float alpha = rotX; // 90 * Mathf.PI/180; //from gyro converted to rad
+        float beta = rotY;//0* Mathf.PI/180; //from gyro converted to rad
+        float gamma = rotZ;// 0 * Mathf.PI/180; //from gyro converted to rad
+        Debug.Log("Pan: " + alpha + " Tilt: " + beta + " Roll: " + gamma);
         
 
-        float alpha = rotX; // * Mathf.PI/180; //from gyro converted to rad
-        float beta = rotY;// * Mathf.PI/180; //from gyro converted to rad
-        float gamma = rotZ;// * Mathf.PI/180; //from gyro converted to rad
-        //Debug.Log("Pan: " + alpha + " Tilt: " + beta + " Roll: " + theta);
-        
-        // rotation matrix
         float[,] R = new float[3, 3]
         {
             { Mathf.Cos(alpha)*Mathf.Cos(beta) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Sin(gamma) - Mathf.Sin(alpha)*Mathf.Cos(gamma) , Mathf.Cos(alpha)*Mathf.Sin(beta)*Mathf.Cos(gamma) + Mathf.Sin(alpha)*Mathf.Sin(gamma)},
@@ -136,14 +134,14 @@ public class WiimoteDemo : MonoBehaviour
 
         //Debug.Log("Rotation Matrix: "+ rotationMatrix[0,0] +" | " + rotationMatrix[0,1] +" | " + rotationMatrix[0,2]);
 
-/*
+
         float det =  R[0,0]*(R[1,1]*R[2, 2]-R[1, 2]*R[2, 1])/
                     -R[0,1]*(R[1,0]*R[2, 2]-R[1, 2]*R[2, 0])/
                     +R[0,2]*(R[1,0]*R[2, 1]-R[1, 1]*R[2, 0]);
 
 
         //Debug.Log("Determinante: " +det);
-*/
+
         /*
         rG[0]= gravity[0]*R[0,0] + gravity[1]*R[0,1] + gravity[2]*R[0,2] ;
         rG[1]= gravity[0]*R[1,0] + gravity[1]*R[1,1] + gravity[2]*R[1,2] ;
@@ -152,6 +150,7 @@ public class WiimoteDemo : MonoBehaviour
         rA[0] = accel[0] * R[0, 0] + accel[1] * R[0, 1] + accel[2] * R[0, 2];
         rA[1] = accel[0] * R[1, 0] + accel[1] * R[1, 1] + accel[2] * R[1, 2];
         rA[2] = accel[0] * R[2, 0] + accel[1] * R[2, 1] + accel[2] * R[2, 2];
+
 
          */
 
@@ -163,13 +162,19 @@ public class WiimoteDemo : MonoBehaviour
         rA[0] = accel[0] * R[0, 0] + accel[0] * R[0, 1] + accel[0] * R[0, 2];
         rA[1] = accel[1] * R[1, 0] + accel[1] * R[1, 1] + accel[1] * R[1, 2];
         rA[2] = accel[2] * R[2, 0] + accel[2] * R[2, 1] + accel[2] * R[2, 2];
-        
+
+
         //Debug.Log("rA: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
-        
+
+
+        //Debug.Log("Rotated Gravity: " +rotatedGravity[0]);
+
         mA[0]=rA[0]-rG[0];
         mA[1]=rA[1]-rG[1];
         mA[2]=rA[2]-rG[2];
-        
+
+
+        // Debug.Log("rA: " +rA[0]+ " | " +rA[1]+ " | " +rA[2]);
 
         //rA[0] = mA[0] * R[0, 0] + mA[1] * R[1, 0] + mA[2] * R[2, 0];
         //rA[1] = mA[0] * R[0, 1] + mA[1] * R[1, 1] + mA[2] * R[2, 1];
@@ -182,7 +187,7 @@ public class WiimoteDemo : MonoBehaviour
 
 
         Debug.Log("A: " + accel[0] + " | " + accel[1] + " | " + accel[2]);
-        Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
+    //    Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
         Debug.Log("rG: " + rG[0] + " | " + rG[1] + " | " + rG[2]);
         Debug.Log("A-G: " + mA[0] + " | " + mA[1] + " | " + mA[2]);
 
@@ -222,7 +227,131 @@ public class WiimoteDemo : MonoBehaviour
             
         return 1;
     }
-    void Start() {
+	
+	/** Hier beginnt der neue Kram **/
+	
+    private Quaternion hamiltonProduct(Quaternion a, Quaternion b) {
+        Quaternion ret = new Quaternion();
+
+        ret.w = a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z;
+        ret.x = a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y;
+        ret.y = a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x;
+        ret.z = a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w;
+
+        return ret;
+    }
+
+    private ownQuat hamiltonProduct2(ownQuat a, ownQuat b) {
+        ownQuat ret = new ownQuat();
+
+        ret.w = a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z;
+        ret.x = a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y;
+        ret.y = a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x;
+        ret.z = a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w;
+
+        return ret;
+    }
+
+    // Just a simple data structure to represent a Quaternion - does not do any checks, so handle with care
+    struct ownQuat {
+        public float w, x, y, z;
+    };
+
+    private ownQuat RotToQuat(float yaw, float pitch, float roll) {
+        ownQuat ret = new ownQuat();
+
+		// siehe WP: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+        float cy = Convert.ToSingle(Math.Cos(yaw * 0.5 / 180.0 * Math.PI));
+        float cp = Convert.ToSingle(Math.Cos(pitch * 0.5 / 180.0 * Math.PI));
+        float cr = Convert.ToSingle(Math.Cos(roll * 0.5 / 180.0 * Math.PI));
+        float sy = Convert.ToSingle(Math.Sin(yaw * 0.5 / 180.0 * Math.PI));
+        float sp = Convert.ToSingle(Math.Sin(pitch * 0.5 / 180.0 * Math.PI));
+        float sr = Convert.ToSingle(Math.Sin(roll * 0.5 / 180.0 * Math.PI));
+
+        // Calculate ownQuat values
+        ret.w = cy * cp * cr + sy * sp * sr;
+        ret.x = cy * cp * sr - sy * sp * cr;
+        ret.y = sy * cp * sr + cy * sp * cr;
+        ret.z = sy * cp * cr - cy * sp * sr;
+
+        return ret;
+    }
+
+    // supposed to remove gravity value from our Wiimote Accelerator... works more or less well
+	// Ich habe das ganze zunächst mit Unity-Datenstrukturen (insb. Vector3 und Quaternion) probiert, später dann mit eigenen (insb. ownQuat)
+	// Der Code mit den Unity-Strukturen ist noch auskommentiert
+	// Wichtig dabei ist, dass Unity's Umwandlung von Vector3 in Quaternion eine andere Reihenfolge benutzt als meine Methode - deshalb ist die Reihenfolge der Rotationswerte
+	// bei der initialisierung von v_rot anders als für die ownQuat-Srtuktur q_rot
+    private Vector3 RemoveGravity3(float rotX, float rotY, float rotZ, float accelX, float accelY, float accelZ) {
+        Vector3 ret = new Vector3(0, 0, 0);
+        //Debug.Log("Raw/Input rotation data: (" + rotX + ", " + rotY + ", " + rotZ + ")");
+        //Debug.Log("Raw/Input acceleration data: (" + accelX + ", " + accelY + ", " + accelZ + ")");
+
+        // Create a vector for our acceleration and rotation values, this is only utilized when using Unity's Quaternions
+        //Vector3 v_accel = new Vector3(accelY, accelX, accelZ);
+        //Vector3 v_rot = new Vector3(rotZ, rotX, rotY);
+
+        // Create a quaternion for our current rotation - atm it's an ownQuat
+        //Quaternion q_rot = Quaternion.Euler(v_rot);
+        //Debug.Log("Rotation Quaternion (w,x,y,z): (" + q_rot.w + ", " + q_rot.x + ", " + q_rot.y + ", " + q_rot.z + ")");
+        ownQuat q_rot = RotToQuat(rotY, rotX, rotZ);
+
+        // Create a quaternion for our acceleration - this should not be normalized ... as a matter of fact it's not even a real quaternion, but who cares
+        //Quaternion q_accel = new Quaternion(v_accel.x, v_accel.y, v_accel.z, 0);
+        //Debug.Log("Acceleration Quaternion (w,x,y,z): (" + q_accel.w + ", " + q_accel.x + ", " + q_accel.y + ", " + q_accel.z + ")");
+        ownQuat q_accel = new ownQuat();
+        q_accel.w = 0;
+        q_accel.x = accelY;
+        q_accel.y = accelX;
+        q_accel.z = accelZ;
+
+        // Now we need to Multiply our Quaternion with our Vector - this should give us a "normalized" Vector (i.e. Gravity should then always point "down" [in z direction])
+        // It could be, that there is an easier (built-in) way to do this, but I haven't found it yet
+		// DIe hier erzeugten Quaternions sind in Wahrheit keine - das ganze ist nur dafür da, damit man den Kram leichter "multiplizieren" kann...
+        //Quaternion q_temp = hamiltonProduct(q_rot, q_accel);
+        ownQuat q_temp = hamiltonProduct2(q_rot, q_accel);
+        //Quaternion q_res = hamiltonProduct(q_temp, Quaternion.Inverse(q_rot));
+        ownQuat q_rinv = new ownQuat();
+        q_rinv.w = q_rot.w;
+        q_rinv.x = -q_rot.x;
+        q_rinv.y = -q_rot.y;
+        q_rinv.z = -q_rot.z;
+        ownQuat q_res = hamiltonProduct2(q_temp, q_rinv);
+        //Debug.Log("Normalized accel vector: (" + q_res.x + ", " + q_res.y + ", " + q_res.z + ")");
+
+        //Debug.Log("Normalized Accel data: (" + v_accel_norm.x + ", " + v_accel_norm.y + ", " + v_accel_norm.z + ")");
+
+        // All that needs to be done now, is to remove the gravity data
+
+        // Sanity check... this has driven me nuts - I used these values to correctly set up the rotation quaternion
+        /*float roll = Mathf.Atan2(2 * q_rot.y * q_rot.w + 2 * q_rot.x * q_rot.z, 1 - 2 * q_rot.y * q_rot.y - 2 * q_rot.z * q_rot.z);
+        float pitch = Mathf.Atan2(2 * q_rot.x * q_rot.w + 2 * q_rot.y * q_rot.z, 1 - 2 * q_rot.x * q_rot.x - 2 * q_rot.y * q_rot.y);
+        float yaw = Mathf.Asin(2 * q_rot.x * q_rot.y + 2 * q_rot.z * q_rot.w);*/
+		// siehe ebenfalls WP
+        float roll = Mathf.Atan2(2 * (q_rot.w * q_rot.x + q_rot.y * q_rot.z), 1 - 2 * (q_rot.x *q_rot.x + q_rot.y*q_rot.y));
+        float pitch = Mathf.Asin(2 * (q_rot.w * q_rot.y - q_rot.x * q_rot.z));
+        float yaw = Mathf.Atan2(2 * (q_rot.w * q_rot.z + q_rot.x * q_rot.y), 1 - 2 * (q_rot.y * q_rot.y + q_rot.z * q_rot.z));
+        Debug.Log("Roll: " + roll * 180 / Math.PI + " Pitch: " + pitch * 180 / Math.PI + " Yaw: " + yaw * 180 / Math.PI);
+
+        // Remove about 0.95 from absolute of z value (i.e. shift it towards 0)
+        q_res.z += (q_res.z < 0) ? 0.95f : -0.95f;
+
+        //Quaternion q_temp2 = hamiltonProduct(Quaternion.Inverse(q_rot), q_res);
+        ownQuat q_temp2 = hamiltonProduct2(q_rinv, q_res);
+        //Quaternion q_orig = hamiltonProduct(q_temp2, q_rot);
+        ownQuat q_cleared = hamiltonProduct2(q_temp2, q_rot);
+        Debug.Log("cleansed vector: (" + q_cleared.x + ", " + q_cleared.y + ", " + q_cleared.z + ")");
+
+        ret.x = q_cleared.x;
+        ret.y = q_cleared.y;
+        ret.z = q_cleared.z;
+
+        return ret;
+    }
+	
+	/** Hier endet der neue Kram **/
+
+        void Start() {
         //inertial=new InertialNavigation();
         //InvokeRepeating("InertialTestTest",1.0f, 1.0f);
         initial_rotation = model.rot.localRotation;
@@ -236,6 +365,8 @@ public class WiimoteDemo : MonoBehaviour
         tempTime += Time.deltaTime;
         //Debug.Log(transform.forward);
         //TransformationTest(model.rot.transform.localRotation.eulerAngles.x, model.rot.transform.localRotation.eulerAngles.y, model.rot.transform.localRotation.eulerAngles.z);
+
+
 
         if (!WiimoteManager.HasWiimote()) { return; }
 
@@ -275,59 +406,77 @@ public class WiimoteDemo : MonoBehaviour
         // speichere die Accelerometerwerte der wiimote in ein Array
 
         accs = wiimote.Accel.GetCalibratedAccelData();
-       // Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
-       
-       RemoveGravity(
+        // Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
+
+        /*RemoveGravity(
+             model.rot.transform.localRotation.eulerAngles.x,
+             model.rot.transform.localRotation.eulerAngles.y,
+             model.rot.transform.localRotation.eulerAngles.z,
+             accs[0],
+             accs[1],
+             accs[2]
+             );
+          */
+        /* //Hab mal versucht, die Achsen zu ändern, hat leider nichts gebracht...
+		RemoveGravity1(
+           model.rot.transform.localRotation.eulerAngles.z,
+           model.rot.transform.localRotation.eulerAngles.x,
+           model.rot.transform.localRotation.eulerAngles.y,
+           accs[1],
+           accs[0],
+           accs[2]
+           );
+		   */
+        /* 
+RemoveGravity2(
+    model.rot.transform.localRotation.eulerAngles.x,
+    model.rot.transform.localRotation.eulerAngles.y,
+    model.rot.transform.localRotation.eulerAngles.z,
+    accs[0],
+    accs[1],
+    accs[2]
+    );
+    */
+
+        Vector3 v_accel = RemoveGravity3(
             model.rot.transform.localRotation.eulerAngles.x,
             model.rot.transform.localRotation.eulerAngles.y,
             model.rot.transform.localRotation.eulerAngles.z,
             accs[0],
             accs[1],
-            accs[2]
-            );
-            
-            /* 
-    RemoveGravity2(
-        model.rot.transform.localRotation.eulerAngles.x,
-        model.rot.transform.localRotation.eulerAngles.y,
-        model.rot.transform.localRotation.eulerAngles.z,
-        accs[0],
-        accs[1],
-        accs[2]
-        );
-        */
-    //ReadOnlyArray<int> accs_raw = wiimote.Accel.accel;
-    //Debug.Log(accs_raw[0]+ " | " + accs_raw[1] + " | "+ accs_raw[2]);
+            accs[2]);
+        
+		//ReadOnlyArray<int> accs_raw = wiimote.Accel.accel;
+        //Debug.Log(accs_raw[0]+ " | " + accs_raw[1] + " | "+ accs_raw[2]);
 
-    /*
-   // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
+        /*
+       // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
 
-   float xA = InertialTest(accs[0], v0, tempTime, s0);
-   float yA = InertialTest(accs[1], v0, tempTime, s0);
-   float zA = InertialTest(accs[2], v0, tempTime, s0);
+       float xA = InertialTest(accs[0], v0, tempTime, s0);
+       float yA = InertialTest(accs[1], v0, tempTime, s0);
+       float zA = InertialTest(accs[2], v0, tempTime, s0);
 
-   Debug.Log("ACC_CALC: X: "+xA+" Y: "+yA+ " Z: "+zA);
+       Debug.Log("ACC_CALC: X: "+xA+" Y: "+yA+ " Z: "+zA);
 
-   // addiere Positionsänderung auf den orangen dummyCube
+       // addiere Positionsänderung auf den orangen dummyCube
 
-   dummyCube.transform.position += new Vector3(xA,yA,zA);
+       dummyCube.transform.position += new Vector3(xA,yA,zA);
 
 
- // führe functions alle timeInterval Sekunden aus
- if (tempTime >timeInterval)
- {
-     tempTime = 0;
-     Debug.Log("Zeitintervall: "+ timeInterval);
-     // functions...
- }
- */
+     // führe functions alle timeInterval Sekunden aus
+     if (tempTime >timeInterval)
+     {
+         tempTime = 0;
+         Debug.Log("Zeitintervall: "+ timeInterval);
+         // functions...
+     }
+     */
 
 
         // button handler
 
         model.a.enabled = wiimote.Button.a;
 
-       
         if (model.a.enabled)
         {
             Debug.Log("A pressed");
@@ -335,10 +484,8 @@ public class WiimoteDemo : MonoBehaviour
             ResetOffset();
         };
         model.b.enabled = wiimote.Button.b;
-        
         if (!model.b.enabled)
         {
-            // laser aus, wenn b-button losgelassen wird.
             myLineRenderer.enabled = false;
         }
         if (model.b.enabled)
@@ -350,7 +497,7 @@ public class WiimoteDemo : MonoBehaviour
             {
                 if (hit.collider.gameObject.name == "OptionA")
                 {
-                    // print("Hit: "+ hit.collider.gameObject.name);
+                    print("Hit: "+ hit.collider.gameObject.name);
                     OptionAClick();
                 }
             }
