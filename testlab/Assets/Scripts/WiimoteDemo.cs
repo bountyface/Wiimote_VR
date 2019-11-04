@@ -55,34 +55,26 @@ public class WiimoteDemo : MonoBehaviour
 
     private float InertialTest(float acceleration, float velocity0, float time, float distance0)
     {
-        // Berechnung der Inertial Navigation laut Formel
-
         if (!inertialActivated) return 0f;
-
-        Debug.Log("InertialTest running...");
-
+        
         a = acceleration;
         t = time;
 
         // 1. Ableitung
         v = a * t + v0;
-
         // 2. Ableitung
         s = (a / 2f) * Mathf.Pow(t, 2f) + v * t + s0;
 
         // new v0
         v0 = v;
-
         // new s0
         s0 = s;
-
+        
         return s;
     }
 
     private float TransformationTest(float alpha, float beta, float gamma)
     {
-       // Debug.Log("Rotation: "+alpha+" | "+beta+" | "+gamma+" | ");
-
         float dx1 = Mathf.Cos(gamma) * Mathf.Cos(alpha) - Mathf.Sin(gamma) * Mathf.Sin(beta) * Mathf.Sin(alpha);
         float dx2 = -Mathf.Sin(gamma) * Mathf.Cos(beta);
         float dx3 = -Mathf.Cos(alpha) * Mathf.Sin(beta) * Mathf.Sin(gamma) + Mathf.Sin(alpha) * Mathf.Cos(gamma);
@@ -102,28 +94,22 @@ public class WiimoteDemo : MonoBehaviour
             {dz1, dz2, dz3}
 
         };
-        //Debug.Log("Matrix: " + result);
+        
         return 1;
     }
 
     public float RemoveGravity(float rotX, float rotY, float rotZ, float accelX, float accelY, float accelZ)
     {
-
         float[] accel = { accelX, accelY, accelZ }; //accelerometer data
         float[] gravity = { 0, 0, 1.0f }; //gravity downwards g = 1.0
         float[] rG = new float[3];
         float[] rA = new float[3];
         float[] mA = new float[3];
-        //double[] mAD = mA;
-
-        //    Debug.Log("RotX: " + rotX + " RotY: " + rotY + " RotZ: " + rotZ);
-        //Debug.Log("AccX: " + accelX + " AccY: " + accelY + " AccZ: " + accelZ);
-
-        float alpha = rotX; // 90 * Mathf.PI/180; //from gyro converted to rad
-        float beta = rotY;//0* Mathf.PI/180; //from gyro converted to rad
-        float gamma = rotZ;// 0 * Mathf.PI/180; //from gyro converted to rad
-        Debug.Log("Pan: " + alpha + " Tilt: " + beta + " Roll: " + gamma);
         
+        float alpha = rotX; // 90 * Mathf.PI/180; //from gyro converted to rad
+        float beta = rotY; //0* Mathf.PI/180; //from gyro converted to rad
+        float gamma = rotZ; // 0 * Mathf.PI/180; //from gyro converted to rad
+        Debug.Log("Pan: " + alpha + " Tilt: " + beta + " Roll: " + gamma);
 
         float[,] R = new float[3, 3]
         {
@@ -131,100 +117,56 @@ public class WiimoteDemo : MonoBehaviour
             { Mathf.Sin(alpha)*Mathf.Cos(beta) , Mathf.Sin(alpha)*Mathf.Sin(beta)*Mathf.Sin(gamma) + Mathf.Cos(alpha)*Mathf.Cos(gamma) , Mathf.Sin(alpha)*Mathf.Sin(beta)*Mathf.Cos(gamma) - Mathf.Cos(alpha)*Mathf.Sin(gamma)},
             {     -1* Mathf.Sin(beta)    ,                  Mathf.Cos(beta) * Mathf.Sin(gamma)                 ,               Mathf.Cos(beta) * Mathf.Cos(gamma)                   }
         };
-
-        //Debug.Log("Rotation Matrix: "+ rotationMatrix[0,0] +" | " + rotationMatrix[0,1] +" | " + rotationMatrix[0,2]);
-
-
-        float det =  R[0,0]*(R[1,1]*R[2, 2]-R[1, 2]*R[2, 1])/
-                    -R[0,1]*(R[1,0]*R[2, 2]-R[1, 2]*R[2, 0])/
-                    +R[0,2]*(R[1,0]*R[2, 1]-R[1, 1]*R[2, 0]);
-
-
-        //Debug.Log("Determinante: " +det);
-
-        /*
-        rG[0]= gravity[0]*R[0,0] + gravity[1]*R[0,1] + gravity[2]*R[0,2] ;
-        rG[1]= gravity[0]*R[1,0] + gravity[1]*R[1,1] + gravity[2]*R[1,2] ;
-        rG[2]= gravity[0]*R[2,0] + gravity[1]*R[2,1] + gravity[2]*R[2,2] ;
-
-        rA[0] = accel[0] * R[0, 0] + accel[1] * R[0, 1] + accel[2] * R[0, 2];
-        rA[1] = accel[0] * R[1, 0] + accel[1] * R[1, 1] + accel[2] * R[1, 2];
-        rA[2] = accel[0] * R[2, 0] + accel[1] * R[2, 1] + accel[2] * R[2, 2];
-
-
-         */
-
-        rG[0]= gravity[0]*R[0,0] + gravity[0]*R[0,1] + gravity[0]*R[0,2] ;
-        rG[1]= gravity[1]*R[1,0] + gravity[1]*R[1,1] + gravity[1]*R[1,2] ;
-        rG[2]= gravity[2]*R[2,0] + gravity[2]*R[2,1] + gravity[2]*R[2,2] ;
-
+        
+        rG[0]= gravity[0]*R[0,0] + gravity[0]*R[0,1] + gravity[0]*R[0,2];
+        rG[1]= gravity[1]*R[1,0] + gravity[1]*R[1,1] + gravity[1]*R[1,2];
+        rG[2]= gravity[2]*R[2,0] + gravity[2]*R[2,1] + gravity[2]*R[2,2];
 
         rA[0] = accel[0] * R[0, 0] + accel[0] * R[0, 1] + accel[0] * R[0, 2];
         rA[1] = accel[1] * R[1, 0] + accel[1] * R[1, 1] + accel[1] * R[1, 2];
         rA[2] = accel[2] * R[2, 0] + accel[2] * R[2, 1] + accel[2] * R[2, 2];
-
-
-        //Debug.Log("rA: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
-
-
-        //Debug.Log("Rotated Gravity: " +rotatedGravity[0]);
-
+        
         mA[0]=rA[0]-rG[0];
         mA[1]=rA[1]-rG[1];
         mA[2]=rA[2]-rG[2];
-
-
-        // Debug.Log("rA: " +rA[0]+ " | " +rA[1]+ " | " +rA[2]);
-
-        //rA[0] = mA[0] * R[0, 0] + mA[1] * R[1, 0] + mA[2] * R[2, 0];
-        //rA[1] = mA[0] * R[0, 1] + mA[1] * R[1, 1] + mA[2] * R[2, 1];
-        //rA[2] = mA[0] * R[0, 2] + mA[1] * R[1, 2] + mA[2] * R[2, 2];
-
-
+        
         rA[0] = mA[0] * R[0, 0] + mA[0] * R[1, 0] + mA[0] * R[2, 0];
         rA[1] = mA[1] * R[0, 1] + mA[1] * R[1, 1] + mA[1] * R[2, 1];
         rA[2] = mA[2] * R[0, 2] + mA[2] * R[1, 2] + mA[2] * R[2, 2];
 
-
         Debug.Log("A: " + accel[0] + " | " + accel[1] + " | " + accel[2]);
-    //    Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
+        //Debug.Log("G: " + gravity[0] + " | " + gravity[1] + " | " + gravity[2]);
         Debug.Log("rG: " + rG[0] + " | " + rG[1] + " | " + rG[2]);
         Debug.Log("A-G: " + mA[0] + " | " + mA[1] + " | " + mA[2]);
-
         Debug.Log("A-G earthframe: " + rA[0] + " | " + rA[1] + " | " + rA[2]);
-
 
         return 1;
     } 
 
     private float RemoveGravity2( float rotX, float rotY, float rotZ, float accX, float accY, float accZ)
     {
+        float vecXAxis = accX;
+        float vecYAxis = accY;
+        float vecZAxis = accZ;
+            
+        float yawRad = rotX* Mathf.PI/180; //from gyro converted to rad
+        float pitchRad = rotY* Mathf.PI/180; //from gyro converted to rad
+        float rollRad = rotZ* Mathf.PI/180; //from gyro converted to rad
         
-            float vecXAxis = accX;
-            float vecYAxis = accY;
-            float vecZAxis = accZ;
-            
-            float yawRad = rotX* Mathf.PI/180; //from gyro converted to rad
-            float pitchRad = rotY* Mathf.PI/180; //from gyro converted to rad
-            float rollRad = rotZ* Mathf.PI/180; //from gyro converted to rad
-            
+        float x = accX, y = accY, z = 0;
+        vecXAxis -= x * Mathf.Cos(yawRad) - y * Mathf.Sin(yawRad) ;
+        vecYAxis -= x * Mathf.Sin(yawRad) - y * Mathf.Cos(yawRad) ;
 
-            float x = accX, y = accY, z = 0;
-            vecXAxis -= x * Mathf.Cos(yawRad) - y * Mathf.Sin(yawRad) ;
-            vecYAxis -= x * Mathf.Sin(yawRad) - y * Mathf.Cos(yawRad) ;
+        x = vecXAxis; z = vecZAxis;
+        vecXAxis -=  x * Mathf.Cos(pitchRad) + z * Mathf.Sin(pitchRad) ;
+        vecZAxis -= - x * Mathf.Sin(pitchRad) + z * Mathf.Cos(pitchRad) ;
 
-            x = vecXAxis; z = vecZAxis;
-            vecXAxis -=  x * Mathf.Cos(pitchRad) + z * Mathf.Sin(pitchRad) ;
-            vecZAxis -= - x * Mathf.Sin(pitchRad) + z * Mathf.Cos(pitchRad) ;
+        y = vecYAxis; z = vecZAxis;
+        vecYAxis -=  y * Mathf.Cos(rollRad) - z * Mathf.Sin(rollRad);
+        vecZAxis -=  y * Mathf.Sin(rollRad) + z * Mathf.Cos(rollRad);
 
-            y = vecYAxis; z = vecZAxis;
-            vecYAxis -=  y * Mathf.Cos(rollRad) - z * Mathf.Sin(rollRad);
-            vecZAxis -=  y * Mathf.Sin(rollRad) + z * Mathf.Cos(rollRad);
-
-            Debug.Log("Vec: "+ vecXAxis+ " | " +vecYAxis+ " | " +vecZAxis);
-
-          
-            
+        Debug.Log("Vec: "+ vecXAxis+ " | " +vecYAxis+ " | " +vecZAxis);
+        
         return 1;
     }
 	
@@ -351,23 +293,17 @@ public class WiimoteDemo : MonoBehaviour
 	
 	/** Hier endet der neue Kram **/
 
-        void Start() {
-        //inertial=new InertialNavigation();
-        //InvokeRepeating("InertialTestTest",1.0f, 1.0f);
-        initial_rotation = model.rot.localRotation;
-        optionAColorblock = optionAButton.colors;
-        optionAColorblock.highlightedColor = new Color32(255,100,100,255);
-        myLineRenderer = laser.GetComponent<LineRenderer>();
+        void Start() { 
+            initial_rotation = model.rot.localRotation; 
+            optionAColorblock = optionAButton.colors; 
+            optionAColorblock.highlightedColor = new Color32(255,100,100,255); 
+            myLineRenderer = laser.GetComponent<LineRenderer>();
     }
 
     void Update ()
     {
         tempTime += Time.deltaTime;
-        //Debug.Log(transform.forward);
-        //TransformationTest(model.rot.transform.localRotation.eulerAngles.x, model.rot.transform.localRotation.eulerAngles.y, model.rot.transform.localRotation.eulerAngles.z);
-
-
-
+        
         if (!WiimoteManager.HasWiimote()) { return; }
 
        // initialisierung
@@ -376,7 +312,6 @@ public class WiimoteDemo : MonoBehaviour
         if (firstTime)
         {
             wiimote.SendDataReportMode(InputDataType.REPORT_BUTTONS_ACCEL_EXT16);
-
             int[,] caldata = { { 464, 500, 600 }, { 499, 600, 500 }, { 596, 497, 500 } };
             wiimote.Accel.accel_calib = caldata;
             wiimote.RequestIdentifyWiiMotionPlus();
@@ -396,7 +331,6 @@ public class WiimoteDemo : MonoBehaviour
                                                 wiimote.MotionPlus.YawSpeed,
                                                 wiimote.MotionPlus.RollSpeed) / 95f; // Divide by 95Hz (average updates per second from wiimote)
                 wmpOffset += offset;
-                //Debug.Log(-wiimote.MotionPlus.PitchSpeed /95f);
 
                 model.rot.Rotate(offset, Space.Self);
             }
@@ -408,7 +342,7 @@ public class WiimoteDemo : MonoBehaviour
         accs = wiimote.Accel.GetCalibratedAccelData();
         // Debug.Log("Calib Accel " +accs[0] + " | "+ accs[1] + " | "+accs[2]);
 
-        /*RemoveGravity(
+        RemoveGravity(
              model.rot.transform.localRotation.eulerAngles.x,
              model.rot.transform.localRotation.eulerAngles.y,
              model.rot.transform.localRotation.eulerAngles.z,
@@ -416,7 +350,7 @@ public class WiimoteDemo : MonoBehaviour
              accs[1],
              accs[2]
              );
-          */
+          
         /* //Hab mal versucht, die Achsen zu ändern, hat leider nichts gebracht...
 		RemoveGravity1(
            model.rot.transform.localRotation.eulerAngles.z,
@@ -437,7 +371,7 @@ RemoveGravity2(
     accs[2]
     );
     */
-
+/*
         Vector3 v_accel = RemoveGravity3(
             model.rot.transform.localRotation.eulerAngles.x,
             model.rot.transform.localRotation.eulerAngles.y,
@@ -446,9 +380,7 @@ RemoveGravity2(
             accs[1],
             accs[2]);
         
-		//ReadOnlyArray<int> accs_raw = wiimote.Accel.accel;
-        //Debug.Log(accs_raw[0]+ " | " + accs_raw[1] + " | "+ accs_raw[2]);
-
+*/
         /*
        // schicke die Accelerometerwerte durch die Formel und gib mir die Positionsänderung zurück
 
@@ -471,10 +403,9 @@ RemoveGravity2(
          // functions...
      }
      */
-
-
+        
+       
         // button handler
-
         model.a.enabled = wiimote.Button.a;
 
         if (model.a.enabled)
@@ -546,7 +477,6 @@ RemoveGravity2(
         ir_pointer.anchorMin = new Vector2(pointer[0], pointer[1]);
         ir_pointer.anchorMax = new Vector2(pointer[0], pointer[1]);
         
-        //Debug.Log("Accel: "+wiimote.Accel.GetCalibratedAccelData());
     }
 
     void OnGUI()
@@ -698,7 +628,7 @@ RemoveGravity2(
         }
         GUILayout.EndVertical();
     }
-    // Micha
+    
     void ZeroOut()
     {
         MotionPlusData data = wiimote.MotionPlus;
@@ -706,8 +636,7 @@ RemoveGravity2(
         model.rot.rotation = Quaternion.FromToRotation(model.rot.rotation * GetAccelVector(), Vector3.up) * model.rot.rotation;
         model.rot.rotation = Quaternion.FromToRotation(model.rot.forward, transform.forward) * model.rot.rotation;
     }
-
-    // Micha
+    
     void ResetOffset()
     {
         wmpOffset = Vector3.zero;
@@ -730,8 +659,7 @@ RemoveGravity2(
         accel_x = accel[0];
         accel_y = -accel[2];
         accel_z = -accel[1];
-
-        // could be wrong, normalisation should take min and max values and calculate them into 0...1
+        
         return new Vector3(accel_x, accel_y, accel_z).normalized;
     }
 
@@ -762,8 +690,7 @@ RemoveGravity2(
     {
         
         Debug.Log("Option A clicked");
-        //optionAColorblock.normalColor = optionAColorblock.pressedColor;
-        //optionAColorblock.normalColor = new Color32(255,100,100,255);
+
         if (!optionAClicked)
         {
             optionAColorblock.highlightedColor = new Color32(100,255,100,255);
@@ -775,7 +702,6 @@ RemoveGravity2(
         }
         else
         {
-            
             optionAColorblock.pressedColor = new Color32(255,255,255,255);
             optionAColorblock.normalColor = new Color32(255,255,255,255);
             optionAButton.colors = optionAColorblock;
