@@ -45,6 +45,21 @@ public class WiimoteDemo : MonoBehaviour
     public float s;
     public float s0 = 0;
 
+    
+    public float[] mA = new float[3];
+    public float[] sVec = new float[3];
+    public  float a_x;
+    public float a_y;
+    public float a_z;
+    public float speedFactor = 0.01f; //regular speed
+    public float v_x;
+    public float v_y;
+    public float v_z;
+
+    public float s_x;
+    public float s_y;
+    public float s_z;
+    
     public float[] accs;
     public float testAccelerationValue = 0;
 
@@ -104,7 +119,7 @@ public class WiimoteDemo : MonoBehaviour
         float[] gravity = { 0, 0, 1.0f }; //gravity downwards g = 1.0
         float[] rG = new float[3];
         float[] rA = new float[3];
-        float[] mA = new float[3];
+       
         
         float alpha = rotX; // 90 * Mathf.PI/180; //from gyro converted to rad
         float beta = rotY; //0* Mathf.PI/180; //from gyro converted to rad
@@ -350,7 +365,25 @@ public class WiimoteDemo : MonoBehaviour
              accs[1],
              accs[2]
              );
-          
+        
+        a_x = mA[0];
+        a_y = mA[1];
+        a_z = mA[2];
+
+        sVec[0] = s_x;
+        sVec[1] = s_y;
+        sVec[2] = s_z;
+        
+        v_x += a_x * Time.deltaTime;
+        v_y += a_y * Time.deltaTime;
+        v_z += a_z * Time.deltaTime;
+
+        s_x += v_x * Time.deltaTime * speedFactor;
+        s_y += v_y * Time.deltaTime * speedFactor;
+        s_z += v_z * Time.deltaTime * speedFactor;
+        
+        model.rot.transform.Translate(s_x, s_y, s_z);
+       
         /* //Hab mal versucht, die Achsen zu ändern, hat leider nichts gebracht...
 		RemoveGravity1(
            model.rot.transform.localRotation.eulerAngles.z,
@@ -635,6 +668,7 @@ RemoveGravity2(
         data.SetZeroValues();
         model.rot.rotation = Quaternion.FromToRotation(model.rot.rotation * GetAccelVector(), Vector3.up) * model.rot.rotation;
         model.rot.rotation = Quaternion.FromToRotation(model.rot.forward, transform.forward) * model.rot.rotation;
+        model.rot.transform.position = new Vector3(0,1.6f,1.4f);
     }
     
     void ResetOffset()
